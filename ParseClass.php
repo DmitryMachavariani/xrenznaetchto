@@ -44,22 +44,30 @@ class ParseClass{
         }
     }
 
-    private function getData($array){
-        while (!feof($this->_file)) {
-            $buffer = fgets($this->_file, 4096);
-        
-            $explode = explode(":", $buffer);
-            if($explode[0] == "g")
-                $this->getG($explode[1]);
-            else if($explode[0] == "d"){
-                $explode_space = explode("\n\r", $explode[2]);
-                foreach ($explode_space as $key => $value) {
-                    $this->_lesson[$explode[1][0]][$explode[1][2]] = $value;
-                }
-            }else if(trim($explode[0]) == ""){
-                return;
-            }
-        }
+    private function getData()
+    {
+    	//while has next line
+    	while(!feof($this->_file))
+    	{
+    		$buffer = fgets($this->_file);
+    		$explode = explode(":", $buffer);
+    		
+    		//is line contains colon and something else
+    		if(count($explode) == 0)
+    			continue;
+    		
+    		$command = $explode[0];
+    		
+    		if($command == "g")
+    			$this->getG($explode[1]);
+    		else if($command == "d")
+    		{
+    			$explode_space = explode("|", $explode[2]);
+    			foreach ($explode_space as $key => $value) {
+    				$this->_lesson[$explode[1][0]][$explode[1][2]] = $value;
+    			}
+    		}
+    	}
     }
 
     private function getG($buffer){
@@ -72,5 +80,9 @@ class ParseClass{
     public function parseData(){
         $this->getData();
         var_dump($this->_lesson);
+        echo "<Br><br>";
+        var_dump($this->_g);
     }
 }
+
+?>
