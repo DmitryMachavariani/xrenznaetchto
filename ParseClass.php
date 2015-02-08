@@ -39,56 +39,38 @@ class ParseClass{
     //Загружаем файл
     public function loadFile(){
         if($this->checkFolder() && $this->checkFile()){
-            //$this->_file = file_get_contents($this->full_path);
             $this->_file = fopen($this->full_path, "r");
             return $this->_file;
         }
     }
 
-    private function getData($array){        
+    private function getData($array){
         while (!feof($this->_file)) {
             $buffer = fgets($this->_file, 4096);
-
+        
             $explode = explode(":", $buffer);
-            if($explode[0] == "g"){
-                $explode_g = explode(",", $explode[1]);
-                
-                foreach($explode_g as $key => $value){
-                    $this->_g[$key] = $value;
+            if($explode[0] == "g")
+                $this->getG($explode[1]);
+            else if($explode[0] == "d"){
+                $explode_space = explode("\n\r", $explode[2]);
+                foreach ($explode_space as $key => $value) {
+                    $this->_lesson[$explode[1][0]][$explode[1][2]] = $value;
                 }
-            }
-            
-            if($explode[0] == "d"){
-                $explode_d = explode("-", $explode[1]);
-                
-                if(trim($explode[2]) != null){
-                    $this->_d[$explode_d[0]][$explode_d[1]] = $explode[2];
-                    //echo $explode[2];
-                }
+            }else if(trim($explode[0]) == ""){
+                return;
             }
         }
-        $this->parseLesson();
     }
-    
-    private function parseLesson(){
-        for($i = 0; $i < count($this->_d); $i++){
-            for($p = 1; $p <= 7; $p++){
-                echo "<hr>";
-                $explode = explode(" ", $this->_d[$i][$p]);
-                //var_dump($explode);
-                //echo $explode[0]."<br />";
-                $explode_paru = explode(",", $explode[0]);
-                
-                foreach ($explode_paru as $key => $value) {
-                    //echo $key;
-                    $this->_d[$explode_d[0]][$explode_d[1]] = array('type'=>$value);
-                    var_dump($this->_d[$explode_d[0]][$explode_d[1]]);
-                }
-            }
+
+    private function getG($buffer){
+        $explode = explode(",", $buffer);
+        foreach ($explode as $key => $value) {
+            array_push($this->_g, $value);
         }
     }
 
     public function parseData(){
-        echo $this->getData($this->_file);
+        $this->getData();
+        var_dump($this->_lesson);
     }
 }
