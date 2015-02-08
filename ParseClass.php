@@ -8,6 +8,10 @@ class ParseClass{
     //Переменная хранящая файл
     public $_file;
     
+    protected $_g = array();
+    protected $_count = array();
+    protected $_lesson = array();
+    
     //Законсим первоначальные значения
     public function __construct($dir_name, $file_name) {
         $this->dir_name = $dir_name;
@@ -35,41 +39,56 @@ class ParseClass{
     //Загружаем файл
     public function loadFile(){
         if($this->checkFolder() && $this->checkFile()){
-            $this->_file = file_get_contents($this->full_path);
+            //$this->_file = file_get_contents($this->full_path);
+            $this->_file = fopen($this->full_path, "r");
             return $this->_file;
         }
     }
-    
-    //Проверяем файл на корректность
-    public function getIsFileCurrect(){
-        $explode_1 = explode(":", $this->_file);
-        
-        if(count($explode_1) == 1)
-            echo "Файл некорректен";
-        else
-            echo "Файл корректен";
-    }
-    
-    private function firstStep(){
-        $explode = explode("&", $this->_file);
-        
-        if(count($explode) == 1)
-            echo "Файл некорректен, отсутствует &";
-        else
-            return $explode;
-    }
-    
-    private function secondStep(){
-        $explode = explode(">>, $this->_file");
-   
-        if(count($explode) == 0)
-            echo "Файл неккоректен, отсутствует >>";
-        else
-            return $explode;
-    }
 
+    private function getData($array){        
+        while (!feof($this->_file)) {
+            $buffer = fgets($this->_file, 4096);
+
+            $explode = explode(":", $buffer);
+            if($explode[0] == "g"){
+                $explode_g = explode(",", $explode[1]);
+                
+                foreach($explode_g as $key => $value){
+                    $this->_g[$key] = $value;
+                }
+            }
+            
+            if($explode[0] == "d"){
+                $explode_d = explode("-", $explode[1]);
+                
+                if(trim($explode[2]) != null){
+                    $this->_d[$explode_d[0]][$explode_d[1]] = $explode[2];
+                    //echo $explode[2];
+                }
+            }
+        }
+        $this->parseLesson();
+    }
+    
+    private function parseLesson(){
+        for($i = 0; $i < count($this->_d); $i++){
+            for($p = 1; $p <= 7; $p++){
+                echo "<hr>";
+                $explode = explode(" ", $this->_d[$i][$p]);
+                //var_dump($explode);
+                //echo $explode[0]."<br />";
+                $explode_paru = explode(",", $explode[0]);
+                
+                foreach ($explode_paru as $key => $value) {
+                    //echo $key;
+                    $this->_d[$explode_d[0]][$explode_d[1]] = array('type'=>$value);
+                    var_dump($this->_d[$explode_d[0]][$explode_d[1]]);
+                }
+            }
+        }
+    }
 
     public function parseData(){
-        var_dump($this->secondStep());
+        echo $this->getData($this->_file);
     }
 }

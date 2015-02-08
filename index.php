@@ -6,7 +6,7 @@
 <?php
 require("ParseClass.php");
 
-$class = new ParseClass('file', '1test.txt');
+$class = new ParseClass('file', 'descr.txt');
 
 $class->loadFile();
 //$class->getIsFileCurrect();
