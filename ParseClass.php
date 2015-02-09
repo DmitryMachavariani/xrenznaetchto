@@ -59,18 +59,85 @@ class ParseClass{
     		$command = $explode[0];
     		
     		if($command == "g")
-    			$this->getG($explode[1]);
+    			$this->getGroupNumbers($explode[1]);
     		else if($command == "d")
     		{
-    			$explode_space = explode("|", $explode[2]);
-    			foreach ($explode_space as $key => $value) {
-    				$this->_lesson[$explode[1][0]][$explode[1][2]] = $value;
-    			}
+    			$this->parseLessons($explode);
     		}
     	}
     }
+    
+    private function parseLessons($explode)
+    {
+    	if($this->isTodayNoLessons($explode))
+    	{
+    		//TODO ЗАПИХНУТЬ ПУСТУЮ ПАРУ
+    		return;
+    	}
+    	 
+    	$this->parseDayAndLessonNumber($explode);
+  
+    	$groups = explode("&", $explode[2]);
+    	foreach($groups as $groupLesson)
+    	{
+    		$groupNumbersAndLessonData = explode(">>", $groupLesson);
+    		$groupNumbers = explode(",", $groupNumbersAndLessonData[0]);
+    		$lessonData = $groupNumbersAndLessonData[1];
+    		
+    		$lessonSubgroupData = explode("#", $lessonData);
+    		
+    		foreach($lessonSubgroupData as $subgroupData)
+    		{
+    			$subgroupData = trim($subgroupData);
+    			if(empty($subgroupData))
+    			{
+    				//у подгруппы нет занятий
+    				continue;
+    			}
+    			
+    			$onEvenAndOddWeekAndLessonsDetails = explode("/", $subgroupData);
+    			$onEvenWeek = strpos($onEvenAndOddWeekAndLessonsDetails[0], "ч") !== false;
+    			$onOddWeek = strpos($onEvenAndOddWeekAndLessonsDetails[0], "н") !== false;
+    			
+    			$lessondNameTeacherAndPlace = explode("|", $onEvenAndOddWeekAndLessonsDetails[1]);
+    			
+    			var_dump($lessondNameTeacherAndPlace);
+    			echo"<br><br>";
+    		}	
+    	}
+    	
+    	
+    	/*
+    	 $explode_space = explode("|", $explode[2]);
+    	 foreach ($explode_space as $key => $value) {
+    	 $this->_lesson[$explode[1][0]][$explode[1][2]] = $value;
+    	 }
+    	 */
+    }
+    
+    private function isTodayNoLessons($explode)
+    {
+    	$explode[2] = trim($explode[2]);
+    	return count($explode) < 3 || empty($explode[2]);
+    }
+    
+    private function parseDayAndLessonNumber($explode)
+    {
+    	$dayAndLesson = explode("-", $explode[1]);
+    	if(count($dayAndLesson) < 2)
+    		throw new Exception("<font color='#CC0000'><b>Ошибка! Номер для недели и номер пары должен быть в формате дн-нп</b></font>");
+    	 
+    	//TODO ЗАПИХНУТЬ НОМЕР ПАРЫ И ДЕНЬ НЕДЕЛИ КУДА НУЖНО
+    	//день недели - $dayAndLesson[0]
+    	//номер пары - $dayAndLesson[1];
+    }
+    
+    private function parseGroupsNumbers($explode)
+    {
+    	//t
+    }
 
-    private function getG($buffer){
+    private function getGroupNumbers($buffer){
         $explode = explode(",", $buffer);
         foreach ($explode as $key => $value) {
             array_push($this->_g, $value);
