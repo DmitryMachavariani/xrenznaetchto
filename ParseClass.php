@@ -77,7 +77,6 @@ class ParseClass{
     	 
     	$this->parseDayAndLessonNumber($explode);
   		$this->parseLessons($explode);
-    	
     }
     
     private function isTodayNoLessons($explode)
