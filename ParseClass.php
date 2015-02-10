@@ -1,4 +1,7 @@
 <?php
+require("Group.php");
+
+
 class ParseClass{
     //Переменные хранящие название папки и название файла
     public $dir_name;
@@ -11,6 +14,8 @@ class ParseClass{
     protected $_g = array();
     protected $_count = array();
     protected $_lesson = array();
+    
+    private $groups = array();
     
     //Законсим первоначальные значения
     public function __construct($dir_name, $file_name) {
@@ -67,22 +72,32 @@ class ParseClass{
     	}
     }
     
-    private function parseDay($explode)
+    private function getGroupNumbers($buffer)
     {
-    	if($this->isTodayNoLessons($explode))
+    	$explode = explode(",", $buffer);
+    	foreach ($explode as $key) 
     	{
-    		//TODO ЗАПИХНУТЬ ПУСТУЮ ПАРУ
-    		return;
+    		$this->groups[] = new Group($key);
     	}
-    	 
-    	$this->parseDayAndLessonNumber($explode);
-  		$this->parseLessons($explode);
     }
     
-    private function isTodayNoLessons($explode)
+    private function parseDay($explode)
     {
-    	$explode[2] = trim($explode[2]);
-    	return count($explode) < 3 || empty($explode[2]);
+    	$dayNumber = $this->parseDayAndLessonNumber($explode);
+    	
+    	if($this->isAtThatTimeNoLessons($explode))
+    	{
+    		//TODO ЗАПИХНУТЬ ПУСТУЮ ПАРУ
+    		$emptyLesson = new Lesson();
+    		$emptyLesson->subject = "-";
+    		foreach($this->groups as $group)
+    		{
+    			$group->days[$dayNumber]->lessons[0][0] = $emptyLesson;
+    		}
+    		return;
+    	}
+    	
+  		$this->parseLessons($explode, $dayNumber);
     }
     
     private function parseDayAndLessonNumber($explode)
@@ -91,12 +106,28 @@ class ParseClass{
     	if(count($dayAndLesson) < 2)
     		throw new Exception("<font color='#CC0000'><b>Ошибка! Номер для недели и номер пары должен быть в формате дн-нп</b></font>");
     	 
+    	foreach($this->groups as $group)
+    	{
+    		if(count($group->days) <= $dayAndLesson[0])
+    			$group->days[] = new Day();
+    		
+    		$group->days[$dayAndLesson[0]]->lessons[0][0] = $dayAndLesson[1];
+    	}
+    	
+    	return $dayAndLesson[0];
+    
     	//TODO ЗАПИХНУТЬ НОМЕР ПАРЫ И ДЕНЬ НЕДЕЛИ КУДА НУЖНО
     	//день недели - $dayAndLesson[0]
     	//номер пары - $dayAndLesson[1];
     }
     
-    private function parseLessons($explode)
+    private function isAtThatTimeNoLessons($explode)
+    {
+    	$explode[2] = trim($explode[2]);
+    	return count($explode) < 3 || empty($explode[2]);
+    }
+    
+    private function parseLessons($explode, $dayNumber)
     {
     	$groups = explode("&", $explode[2]);
     	foreach($groups as $groupLesson)
@@ -107,6 +138,7 @@ class ParseClass{
     		
     		$lessonSubgroupData = explode("#", $lessonData);
     		
+    		$subgroupCounter = 0;
     		foreach($lessonSubgroupData as $subgroupData)
     		{
     			$subgroupData = trim($subgroupData);
@@ -122,30 +154,59 @@ class ParseClass{
     			
     			$lessondNameTeacherAndPlace = explode("|", $onEvenAndOddWeekAndLessonsDetails[1]);
     			
+    			$lesson = new Lesson();
+    			$lesson->subject = $lessondNameTeacherAndPlace[0];
+    			$lesson->teacher = $lessondNameTeacherAndPlace[1];
+    			$lesson->room = $lessondNameTeacherAndPlace[2];
+    			$lesson->onEven = $onEvenWeek;
+    			$lesson->onOdd = $onOddWeek;
+    			
+    			foreach($groupNumbers as $groupNumber)
+    			{
+    				try 
+    				{
+    					$this->groups[$groupNumber]->days[$dayNumber]->lessons[$subgroupCounter][] = $lesson;
+    				}
+    				catch(Exception $e)
+    				{
+    					$e->getMessage();
+    				}
+    				
+    			}
+    			
+    			
+    			$subgroupCounter++;
     			//TODO ЗАПИХНУТЬ НАЗВАНИЕ ПРЕДМЕТОВ, ПРЕПОДАВАТЕЛЕЙ И КАБИНЕТЫ
     			/*
     			 * $lessondNameTeacherAndPlace[0] - НАЗВАНИЕ ПРЕДМЕТА
     			 * $lessondNameTeacherAndPlace[1] - ПРЕПОДАВАТЕЛЬ
     			 * $lessondNameTeacherAndPlace[2] - КАБИНЕТ
     			 */
-    			var_dump($lessondNameTeacherAndPlace);
-    			echo"<br><br>";
+    			//var_dump($lessondNameTeacherAndPlace);
+    			//echo"<br><br>";
     		}	
     	}
     }
 
-    private function getGroupNumbers($buffer){
-        $explode = explode(",", $buffer);
-        foreach ($explode as $key => $value) {
-            array_push($this->_g, $value);
-        }
-    }
-
     public function parseData(){
         $this->getData();
-        var_dump($this->_lesson);
-        echo "<Br><br>";
-        var_dump($this->_g);
+        
+        foreach($this->groups as $group)
+        {
+        	echo "Группа: ".$group->groupName."<br>";
+        	
+        	for($i = 0; $i < count($group->days); $i++)
+        	{
+        		echo "&#9;День ".$i."<br>";
+        		foreach($group->days[$i]->lessons as $lesson)
+        		{
+        			foreach($lesson as $subgroupLesson)
+        			{
+        				echo "&#9;&#9;Пара: ".$subgroupLesson->subject."; Препод: ".$subgroupLesson->teacher."; Кабинет: ".$subgroupLesson->room."; ч нч".$subgroupLesson->onEven." ".$subgroupLesson->onOdd."<br>";
+        			}
+        		}
+        	}
+        }
     }
 }
 

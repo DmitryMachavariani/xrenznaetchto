@@ -1,8 +1,14 @@
 <?php 
+require("Day.php");
 class Group
 {
-	private $groupId;
-	private $lessons = array();
+	public $groupName;
+	public $days = array();
+	
+	public function __construct($groupName)
+	{
+		$this->groupName = $groupName;
+	}
 }
 
 

@@ -1,11 +1,11 @@
 <?php 
 class Lesson
 {
-	private $teacher;
-	private $title;
-	private $place;
-	private $onEven;
-	private $onOdd;
+	public $teacher;
+	public $subject;
+	public $room;
+	public $onEven;
+	public $onOdd;
 }
 
 
