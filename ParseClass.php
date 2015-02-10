@@ -108,12 +108,13 @@ class ParseClass{
     	 
     	foreach($this->groups as $group)
     	{
-    		if(count($group->days) <= $dayAndLesson[0])
+    		if(count($group->days) < $dayAndLesson[0])
     			$group->days[] = new Day();
     		
     		$group->days[$dayAndLesson[0]]->lessons[0][0] = $dayAndLesson[1];
     	}
     	
+    	echo "returned: ".$dayAndLesson[0];
     	return $dayAndLesson[0];
     
     	//TODO ЗАПИХНУТЬ НОМЕР ПАРЫ И ДЕНЬ НЕДЕЛИ КУДА НУЖНО
