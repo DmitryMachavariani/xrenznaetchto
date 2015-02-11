@@ -87,8 +87,6 @@ class ParseClass{
     	array_push($this->groups, new Group($groupName));
     }
     
-    
-    
     private function parseDay($explode)
     {
     	$dayAndLesson = $this->parseDayAndLessonNumber($explode);
@@ -135,18 +133,23 @@ class ParseClass{
     	{
     		$e->getMessage();
     	}
-    	
+
     	return count($explode) < 3 || empty($explode[2]);
     }
     
     private function parseLessons($explode, $dayNumber, $lessonNumber)
     {
     	$groups = explode("&", $explode[2]);
+    	
+    	
+    	
     	foreach($groups as $groupLesson)
     	{
     		$groupNumbersAndLessonData = explode(">>", $groupLesson);
     		$groupNumbers = explode(",", $groupNumbersAndLessonData[0]);
     		$lessonData = $groupNumbersAndLessonData[1];
+    		
+    		
     		
     		$lessonSubgroupData = explode("#", $lessonData);
     		
@@ -158,10 +161,11 @@ class ParseClass{
     		{
     			foreach($lessonSubgroupData as $subgroupLesson)
     			{
+    				
     				$subgroupLesson = trim($subgroupLesson);
     				if(empty($subgroupLesson))
     				{
-    					return;
+    					continue;
     				}
     				
     				$onEvenAndOddWeekAndLessonsDetails = explode("/", $subgroupLesson);
@@ -196,7 +200,6 @@ class ParseClass{
     
     private function addLesson($lessonData, $dayNumber, $lessonNumber, $groupNumbers)
     {
-    	var_dump($lessonData);
     	$lessonData = trim($lessonData);
     	if(empty($lessonData))
     	{
@@ -212,7 +215,8 @@ class ParseClass{
     	$subject = $lessondNameTeacherAndPlace[0];
     	$teacher = $lessondNameTeacherAndPlace[1];
     	$room = $lessondNameTeacherAndPlace[2];
-    	 
+    	
+    	
     	foreach($groupNumbers as $groupNumber)
     	{
     		try
@@ -227,7 +231,6 @@ class ParseClass{
     		}
     		 
     	}
-    	 
     	//TODO ЗАПИХНУТЬ НАЗВАНИЕ ПРЕДМЕТОВ, ПРЕПОДАВАТЕЛЕЙ И КАБИНЕТЫ
     	/*
     	 * $lessondNameTeacherAndPlace[0] - НАЗВАНИЕ ПРЕДМЕТА

@@ -37,7 +37,19 @@ class Day
 	public function addSubgroupLesson($lessonNumber, $teacher = "-", $subject = "-", $room = "-", $onEven = true, $onOdd = true)
 	{
 		$lessonIndex = $lessonNumber - 1;
-		$this->lessons[$lessonIndex] = new LessonsForSubgroups();
+		
+		if(! isset($this->lessons[$lessonIndex]))
+		{
+			$this->lessons[$lessonIndex] = new LessonsForSubgroups();
+		}
+		else if()
+		{
+			echo "<b>МАНАДАРИН</b><br>";
+			echo "ЛЕЧИ: ".$lessonNumber."; ".$teacher."; ".$subject."; ".$room."; !".$onEven."; !".$onOdd."<br>";
+		}
+			
+		
+		
 	
 		$currentLesson = $this->lessons[$lessonIndex];
 		$currentLesson->teacher[] = $teacher;
