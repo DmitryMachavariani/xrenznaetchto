@@ -1,36 +1,36 @@
 <?php 
 require("Day.php");
+
+$DAYS_PER_WEEK = 5;
+
 class Group
 {
-	public $groupName;
-	private $days = array();
+	private $groupName;
+	private $days;
 	
 	public function __construct($groupName)
 	{
 		$this->groupName = $groupName;
+		$this->days = array();
+		
+		for($i = 1; $i <= $DAYS_PER_WEEK; $i++)
+			$this->days = new Day($i, $groupName);
 	}
 	
-	public function getDays()
+	public function getName()
 	{
-		return $this->days;
+		return $this->groupName;
 	}
 	
 	public function getDay($dayNumber)
 	{
-		return $this->days[$dayNumber - 1];
-	}
-	
-	public function isDayAre($dayNumber)
-	{
-		return isset($this->days[$dayNumber - 1]);
-	}
-	
-	public function guaranteedGetDay($dayNumber)
-	{
-		if(! $this->isDayAre($dayNumber))
-			$this->days[$dayNumber - 1] = new Day();
+		$dayIndex = $dayNumber - 1;
 		
-		return $this->days[$dayNumber - 1];
+		if(!isset($this->days[$dayIndex]))
+			throw new Exception("<font color='#CC0000'><b>Ошибка! Дня №".$dayNumber.
+					" для группы ".$this->groupName." не существует!</b></font>");
+			
+		return $this->days[$dayIndex];
 	}
 }
 

@@ -1,24 +1,28 @@
 <?php 
+require_once("AbstractLesson.php");
 require_once("Lesson.php");
 
-class LessonsForSubgroups
+class LessonsForSubgroups extends AbstractLesson
 {
-	public $lessons = array();
+	private $lessons;
+	
+	public function __construct($lessons)
+	{
+		$this->$lessons = $lessons;
+	}
 	
 	public function show()
 	{
-		echo "COUNT: ".count($this->lessons)."; ";
-		for($i = 0; $i < count($this->lessons); $i++)
+		echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;###";
+		foreach($lessons as $lesson)
 		{
-			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Пара: ".
-				$this->lessons[$i]->subject."; Препод: ".
-				$this->lessons[$i]->teacher."; Кабинет: ".
-				$this->lessons[$i]->room."; ч нч".
-				$this->lessons[$i]->onEven." ".
-				$this->lessons[$i]->onOdd." | ";
+				echo
+					"Название пары: ".$lesson->getSubject()."; ".
+					"Преподаватель: ".$lesson->getTeacher()."; ".
+					"Помещение: ".$lesson->getRoom()."; ".
+					"По чётным: ".(false !== $lesson->getOnEvenWeek())."; ".
+					"По нечётным: ".(false !== $lesson->getOnOddWeek())."&nbsp;&nbsp;&nbsp;&nbsp;";
 		}
-		
-		echo "<br>";
 	}
-};
+}
 ?>

@@ -3,67 +3,36 @@ require("Lesson.php");
 require("LessonsForSubgroups.php");
 class Day
 {
-	public $lessons = array();
+	private $lessons;
+	private $number;
+	private $group;
 	
-	public function getLessons()
+	public function __construct($number, $group)
 	{
-		return $this->lessons;
+		$this->number = $number;
+		$this->group = $group;
+		$lessons = array();
+	}
+	
+	public function addLesson($lessonNumber, $lesson)
+	{
+		$lessonIndex = $lessonNumber - 1;
+		
+		if(isset($this->lesson[$lessonIndex]) && !empty($this->lesson[$lessonIndex]))
+			throw new Exception("<font color='#CC0000'><b>Ошибка! Пара №".$lessonNumber.
+					" в дне номер ".$this->number." для группы ".$this->group." уже занята чем-то другим!</b></font>");
+			
+		$this->lessons[$lessonIndex] = $lesson;
 	}
 	
 	public function getLesson($lessonNumber)
 	{
-		if(! isset($this->lessons[$lessonNumber - 1]))
-			throw new Exception("<font color='#CC0000'><b>Ошибка! Урока № ".$lessonNumber." не существует</b></font>");
-		
-		return $this->lessons[$lessonNumber - 1];
-	}
-	
-	public function addLesson($lessonNumber, $teacher = "-", $subject = "-", $room = "-", $onEven = true, $onOdd = true)
-	{
 		$lessonIndex = $lessonNumber - 1;
-		if(! $this->isLessonAre($lessonIndex))
-			$this->lessons[$lessonIndex] = new Lesson();
+		if(!isset($this->lesson[$lessonIndex]))
+			throw new Exception("<font color='#CC0000'><b>Ошибка! Пары №".$lessonNumber.
+					" в дне номер ".$this->number." для группы ".$this->group." не существует!</b></font>");
 		
-		$currentLesson = $this->lessons[$lessonIndex];
-		$currentLesson->teacher = $teacher;
-		$currentLesson->subject = $subject;
-		$currentLesson->room = $room;
-		$currentLesson->onEven = $onEven;
-		$currentLesson->onOdd = $onOdd;
-		
-		$this->lessons[$lessonIndex] = $currentLesson;
-	}
-	
-	public function addSubgroupLesson($lessonNumber, $teacher = "-", $subject = "-", $room = "-", $onEven = true, $onOdd = true)
-	{
-		$lessonIndex = $lessonNumber - 1;
-		
-		if(! isset($this->lessons[$lessonIndex]))
-		{
-			$this->lessons[$lessonIndex] = new LessonsForSubgroups();
-		}
-		else if()
-		{
-			echo "<b>МАНАДАРИН</b><br>";
-			echo "ЛЕЧИ: ".$lessonNumber."; ".$teacher."; ".$subject."; ".$room."; !".$onEven."; !".$onOdd."<br>";
-		}
-			
-		
-		
-	
-		$currentLesson = $this->lessons[$lessonIndex];
-		$currentLesson->teacher[] = $teacher;
-		$currentLesson->subject[] = $subject;
-		$currentLesson->room[] = $room;
-		$currentLesson->onEven[] = $onEven;
-		$currentLesson->onOdd[] = $onOdd;
-	
-		$this->lessons[$lessonIndex] = $currentLesson;
-	}
-	
-	public function isLessonAre($lessonIndex)
-	{
-		return isset($this->lessons[$lessonIndex]);
+		return $this->lesson[$lessonIndex];
 	}
 }
 
