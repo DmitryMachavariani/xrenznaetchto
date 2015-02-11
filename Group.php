@@ -33,6 +33,4 @@ class Group
 		return $this->days[$dayIndex];
 	}
 }
-
-
 ?>
