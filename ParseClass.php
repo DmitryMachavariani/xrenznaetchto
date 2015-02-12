@@ -75,7 +75,15 @@ class ParseClass
 				{
 					foreach($day->getLessons() as $lesson)
 					{
-						$lesson->show();
+						if(is_array($lesson))
+						{
+							foreach($lesson as $sublesson)
+							{
+								$sublesson->show();
+							}
+						}
+						else
+							$lesson->show();
 					}
 				}
 				

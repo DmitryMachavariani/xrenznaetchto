@@ -18,9 +18,15 @@ class Day
 	{
 		$lessonIndex = $lessonNumber - 1;
 		
-		if(isset($this->lesson[$lessonIndex]) && !empty($this->lesson[$lessonIndex]))
-			throw new Exception("<font color='#CC0000'><b>Ошибка! Пара №".$lessonNumber.
-					" в дне номер ".$this->number." для группы ".$this->group." уже занята чем-то другим!</b></font>");
+		if(isset($this->lessons[(int)$lessonIndex]) && !empty($this->lessons[(int)$lessonIndex]))
+		{
+			$temp = $this->lessons[$lessonIndex];
+			$this->lessons[$lessonIndex] = array();
+			array_push($this->lessons[$lessonIndex], $temp);
+			array_push($this->lessons[$lessonIndex], $lesson);
+			
+			return;
+		}
 			
 		$this->lessons[$lessonIndex] = $lesson;
 	}
