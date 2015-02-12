@@ -20,6 +20,6 @@ $class = new ParseClass('file', 'descr.txt');
 
 $class->loadFile();
 //$class->getIsFileCurrect();
-$class->parseData();
+$class->parse();
 
 ?>

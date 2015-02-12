@@ -4,17 +4,17 @@ require_once("Lesson.php");
 
 class LessonsForSubgroups extends AbstractLesson
 {
-	private $lessons;
+	private $lessons = null;
 	
 	public function __construct($lessons)
 	{
-		$this->$lessons = $lessons;
+		$this->lessons = $lessons;
 	}
 	
 	public function show()
 	{
 		echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;###";
-		foreach($lessons as $lesson)
+		foreach($this->lessons as $lesson)
 		{
 				echo
 					"Название пары: ".$lesson->getSubject()."; ".
@@ -23,6 +23,7 @@ class LessonsForSubgroups extends AbstractLesson
 					"По чётным: ".(false !== $lesson->getOnEvenWeek())."; ".
 					"По нечётным: ".(false !== $lesson->getOnOddWeek())."&nbsp;&nbsp;&nbsp;&nbsp;";
 		}
+		echo "<br>";
 	}
 }
 ?>

@@ -34,6 +34,16 @@ class Day
 		
 		return $this->lesson[$lessonIndex];
 	}
+	
+	public function getLessons()
+	{
+		return $this->lessons;
+	}
+	
+	public function getNumber()
+	{
+		return $this->number;
+	}
 }
 
 ?>
