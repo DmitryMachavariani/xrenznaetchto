@@ -81,6 +81,7 @@ class ParseClass
 				
 			}
 		}
+		
 	}
 	
 	private function parseGroups($buffer)
@@ -107,8 +108,8 @@ class ParseClass
 		$lessonData = trim($lessonData);
 		if(empty($lessonData))
 		{
-			echo "<font color='#CC0000'><b>Нет пар!</b></font>";
-			echo "<br>\n";
+			//echo "<font color='#CC0000'><b>Нет пар!</b></font>";
+			//echo "<br>\n";
 			return;
 		}
 		
@@ -158,10 +159,9 @@ class ParseClass
 		$groups = $this->getGroupsList($groupLesson);
 		$groupLesson = explode(">>", $groupLesson)[1];
 		
-		;
-		
 		foreach($groups as $group)
 		{
+			//echo "группа ".$group."<br>\n";
 			$this->splitBySubgroup($groupLesson, $group, $dayNumber, $lessonNumber);
 		}
 	}
@@ -210,6 +210,7 @@ class ParseClass
 				$room = $teacherRoomSubject[2];
 			}
 			
+			//echo $subject."; ".$teacher."<br>\n";
 			array_push($lessonsWithSubgroups, new Lesson($subject, $teacher, $room, $onEvenWeek, $onOddWeek));
 		}
 		
@@ -217,9 +218,11 @@ class ParseClass
 		{
 			$this->groups[(int)$group]->getDay($dayNumber)->addLesson($lessonNumber, new LessonsForSubgroups($lessonsWithSubgroups));
 		}
-		else if(count($lessonsWithSubgroups) == 0)
+		else if(count($lessonsWithSubgroups) == 1)
 		{
-			$this->groups[$group]->getDay($dayNumber)->addLesson($lessonNumber, $lessonsWithSubgroups[0]);
+			$this->groups[(int)$group]->
+			getDay($dayNumber)->
+			addLesson($lessonNumber, $lessonsWithSubgroups[0]);
 		}
 	}
 }
