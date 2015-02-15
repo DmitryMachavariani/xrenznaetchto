@@ -20,7 +20,7 @@ class Lesson extends AbstractLesson
 	
 	public function show()
 	{
-		echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".
+		echo "".
 				"Название пары: ".$this->subject."; ".
 				"Преподаватель: ".$this->teacher."; ".
 				"Помещение: ".$this->room."; ".

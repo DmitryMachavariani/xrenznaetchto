@@ -73,23 +73,21 @@ class ParseClass
 				
 				if(is_array($day->getLessons()))
 				{
+					$lessonCounter = 1;
 					foreach($day->getLessons() as $lesson)
 					{
-						if(is_array($lesson))
-						{
+						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;№ пары ".$lessonCounter."; ";
+						if(is_array($lesson) !== false)
 							foreach($lesson as $sublesson)
-							{
 								$sublesson->show();
-							}
-						}
 						else
 							$lesson->show();
+						
+						$lessonCounter++;
 					}
 				}
-				
 			}
 		}
-		
 	}
 	
 	private function parseGroups($buffer)
@@ -97,7 +95,6 @@ class ParseClass
 		$groupNames = explode(",", $buffer);
 		foreach ($groupNames as $group)
 		{
-			echo "Я запихнул группу ".trim($group)."<br>\n";
 			array_push($this->groups, new Group($group));
 		}
 		echo "<br>";
@@ -111,25 +108,34 @@ class ParseClass
 	//	echo "<br>\n";
 		///////////////////////
 		
-		
+		$dayNumber = (int)$this->getDayNumber($dayAndLessonNumbers);
+		$lessonNumber = (int)$this->getLessonNumber($dayAndLessonNumbers);
 		
 		$lessonData = trim($lessonData);
+		
 		if(empty($lessonData))
 		{
 			//echo "<font color='#CC0000'><b>Нет пар!</b></font>";
 			//echo "<br>\n";
+			
+			foreach($this->groups as $group)
+			{
+				$group->getDay($dayNumber)->addLesson($lessonNumber, new Lesson());
+			}
+			
 			return;
 		}
-		
-		$dayNumber = (int)$this->getDayNumber($dayAndLessonNumbers);
-		$lessonNumber = (int)$this->getLessonNumber($dayAndLessonNumbers);
 		
 		$splittedLessonsByGroups = $this->splitByGroups($lessonData);
 		
 		foreach($splittedLessonsByGroups as $groupsLesson)
 		{
 			$this->parseByGroupLesson($groupsLesson, $dayNumber, $lessonNumber);
-			
+		}
+		
+		foreach($this->groups as $group)
+		{
+			$group->getDay($dayNumber)->getOrAddLesson($lessonNumber);
 		}
 		//$groupList = $this->getGroupsList($lessonData);
 		

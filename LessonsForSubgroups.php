@@ -13,7 +13,7 @@ class LessonsForSubgroups extends AbstractLesson
 	
 	public function show()
 	{
-		echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;###";
+		echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ARRAY: </b>";
 		foreach($this->lessons as $lesson)
 		{
 				echo
@@ -21,7 +21,7 @@ class LessonsForSubgroups extends AbstractLesson
 					"Преподаватель: ".$lesson->getTeacher()."; ".
 					"Помещение: ".$lesson->getRoom()."; ".
 					"По чётным: ".(false !== $lesson->getOnEvenWeek())."; ".
-					"По нечётным: ".(false !== $lesson->getOnOddWeek())."&nbsp;&nbsp;&nbsp;&nbsp;";
+					"По нечётным: ".(false !== $lesson->getOnOddWeek())."&nbsp;&nbsp;&nbsp;&nbsp;###";
 		}
 		echo "<br>";
 	}

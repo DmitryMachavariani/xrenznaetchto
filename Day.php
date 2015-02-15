@@ -18,7 +18,7 @@ class Day
 	{
 		$lessonIndex = $lessonNumber - 1;
 		
-		if(isset($this->lessons[(int)$lessonIndex]) && !empty($this->lessons[(int)$lessonIndex]))
+		if(isset($this->lessons[(int)$lessonIndex]) || !empty($this->lessons[(int)$lessonIndex]))
 		{
 			$temp = $this->lessons[$lessonIndex];
 			$this->lessons[$lessonIndex] = array();
@@ -27,18 +27,40 @@ class Day
 			
 			return;
 		}
-			
+		
 		$this->lessons[$lessonIndex] = $lesson;
 	}
 	
 	public function getLesson($lessonNumber)
 	{
 		$lessonIndex = $lessonNumber - 1;
-		if(!isset($this->lesson[$lessonIndex]))
+		
+		if(!isset($this->lessons[$lessonIndex]))
+		{
 			throw new Exception("<font color='#CC0000'><b>Ошибка! Пары №".$lessonNumber.
 					" в дне номер ".$this->number." для группы ".$this->group." не существует!</b></font>");
+			return;
+		}
+			
 		
-		return $this->lesson[$lessonIndex];
+		return $this->lessons[$lessonIndex];
+	}
+	
+	public function getOrAddLesson($lessonNumber)
+	{
+		$lessonIndex = $lessonNumber - 1;
+	
+		try
+		{
+			$this->getLesson($lessonNumber);
+		}
+		catch(Exception $e)
+		{
+			$this->lessons[(int)$lessonIndex] = new Lesson();
+			//echo $e->getMessage()."<br>\n";
+		}
+	
+		return $this->lessons[(int)$lessonIndex];
 	}
 	
 	public function getLessons()
