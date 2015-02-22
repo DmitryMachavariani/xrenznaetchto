@@ -16,10 +16,33 @@ if($debug)
 
 require("ParseClass.php");
 
-$class = new ParseClass('file', 'descr.txt');
+$directoryWithFilesForParse = "file";
+$filesArray = readDirectory($directoryWithFilesForParse);
 
-$class->loadFile();
-//$class->getIsFileCurrect();
-$class->parse();
+foreach($filesArray as $currentFile)
+{
+	if(!is_array($currentFile))
+	{
+		$class = new ParseClass($directoryWithFilesForParse, $currentFile);
+		$class->loadFile();
+		$class->parse();
+	}
+		
+}
+
+function readDirectory($dir)
+{
+	$result[] = array();
+	if ($handle = opendir($dir))
+	{
+		while ($file = readdir($handle))
+			if ($file != "." && $file != "..")
+				array_push($result, $file);
+			
+		closedir($handle);
+	}
+	
+	return $result;
+}
 
 ?>
