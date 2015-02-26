@@ -1,5 +1,3 @@
-<title>gfsdgs</title>
-
 <?php
 /* @var $this yii\web\View */
 $this->title = 'Schedule Parser';
@@ -7,7 +5,7 @@ $this->title = 'Schedule Parser';
 require("../controllers/ScheduleParserController.php");
 $parsingController = ScheduleParserController::getInstance();
 
-/*
+
 function answerWordData($word, $masters, $isSubject = true)
 {
 	$itemValue = ($isSubject)? "предмета": "преподавателя";
@@ -42,6 +40,9 @@ function answerWordData($word, $masters, $isSubject = true)
 	echo "</form>\n";
 	echo "<br><hr><br>\n";
 }
-*/
+
 ?>
-ЗДЕСЬ КАРОЧЕ ПОКА НИЧЕВО, СМОТРЕТЬ В МОДЕЛЯХ И КОНТРОЛЛЕРАХ
+<script>
+	var ajax = new XMLHttpRequest();
+	
+</script>
