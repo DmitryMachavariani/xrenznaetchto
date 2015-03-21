@@ -1,13 +1,15 @@
 <?php
 require("Group.php");
 
-
 class ParseClass
 {
 	private $file;
 	private $folder;
 	private $fullPath;
 	private $groups;
+	private $campusId;
+	private $course;
+	private $instituteId;
 	
 	public function __construct($folder, $file)
 	{
@@ -62,32 +64,60 @@ class ParseClass
 			{
 				$this->parseDayCommand($explode[1], $explode[2]);
 			}
+			else if($command == "h")
+			{
+				$headerData = explode(",", $explode[1]);
+				
+				$this->instituteId = $headerData[0];
+				echo "pacan. instituteId = ".$this->instituteId."<br>\n";
+				$this->campusId = $headerData[1];
+				$this->course = $headerData[2];
+			}
 		}
+		
 		
 		foreach($this->groups as $currentGroup)
 		{
-			echo "Группа: ".$currentGroup->getName()."<br>\n";
+			//echo "Группа: ".$currentGroup->getName()."<br>\n";
 			foreach($currentGroup->getDays() as $day)
 			{
-				echo "&nbsp;&nbsp;&nbsp;&nbsp;День: ".$day->getNumber()."<br>\n";
+				//echo "&nbsp;&nbsp;&nbsp;&nbsp;День: ".$day->getNumber()."<br>\n";
 				
 				if(is_array($day->getLessons()))
 				{
 					$lessonCounter = 1;
 					foreach($day->getLessons() as $lesson)
 					{
+						/*
 						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;№ пары ".$lessonCounter."; ";
 						if(is_array($lesson) !== false)
 							foreach($lesson as $sublesson)
 								$sublesson->show();
 						else
 							$lesson->show();
+						*/
+						
+						if(is_array($lesson) !== false)
+							foreach($lesson as $sublesson)
+								$sublesson->insertToDb($currentGroup->getName(), $lessonCounter, 0, $day->getNumber(), 
+									$this->campusId, $this->course, 1, 0, $this->instituteId);
+						else 
+							$lesson->insertToDb($currentGroup->getName(), $lessonCounter, 0, $day->getNumber(), 
+									$this->campusId, $this->course, 1, 1, $this->instituteId);
+						
+						//echo "typeof: ".gettype($lesson)."<br>\n";
 						
 						$lessonCounter++;
 					}
 				}
 			}
 		}
+		
+		/*
+		echo "<pre>";
+		echo print_r($this->groups);
+		echo "</pre>";
+		 */
 	}
 	
 	private function parseGroups($buffer)
@@ -197,10 +227,6 @@ class ParseClass
 	{
 		$subgroups = explode("#", $groupLesson);
 		
-		//var_dump($group);
-		//echo "<br>\n";
-		//var_dump($subgroups);
-		//echo"<br>\n";
 		$lessonsWithSubgroups = array();
 		
 		foreach($subgroups as $subgroup)
@@ -224,7 +250,6 @@ class ParseClass
 				$room = $teacherRoomSubject[2];
 			}
 			
-			//echo $subject."; ".$teacher."<br>\n";
 			array_push($lessonsWithSubgroups, new Lesson($subject, $teacher, $room, $onEvenWeek, $onOddWeek));
 		}
 		
@@ -235,8 +260,8 @@ class ParseClass
 		else if(count($lessonsWithSubgroups) == 1)
 		{
 			$this->groups[(int)$group]->
-			getDay($dayNumber)->
-			addLesson($lessonNumber, $lessonsWithSubgroups[0]);
+				getDay($dayNumber)->
+				addLesson($lessonNumber, $lessonsWithSubgroups[0]);
 		}
 	}
 }
