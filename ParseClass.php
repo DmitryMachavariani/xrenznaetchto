@@ -59,7 +59,7 @@ class ParseClass
 			$command = $explode[0];
 	
 			if($command == "g")
-				$this->parseGroups($explode[1]);/////////////////////////
+				$this->parseGroups($explode[1]);
 			else if($command == "d")
 			{
 				$this->parseDayCommand($explode[1], $explode[2]);
@@ -69,7 +69,6 @@ class ParseClass
 				$headerData = explode(",", $explode[1]);
 				
 				$this->instituteId = $headerData[0];
-				echo "pacan. instituteId = ".$this->instituteId."<br>\n";
 				$this->campusId = $headerData[1];
 				$this->course = $headerData[2];
 			}
@@ -78,34 +77,20 @@ class ParseClass
 		
 		foreach($this->groups as $currentGroup)
 		{
-			//echo "Группа: ".$currentGroup->getName()."<br>\n";
 			foreach($currentGroup->getDays() as $day)
 			{
-				//echo "&nbsp;&nbsp;&nbsp;&nbsp;День: ".$day->getNumber()."<br>\n";
-				
 				if(is_array($day->getLessons()))
 				{
 					$lessonCounter = 1;
 					foreach($day->getLessons() as $lesson)
 					{
-						/*
-						echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;№ пары ".$lessonCounter."; ";
-						if(is_array($lesson) !== false)
-							foreach($lesson as $sublesson)
-								$sublesson->show();
-						else
-							$lesson->show();
-						*/
-						
-						if(is_array($lesson) !== false)
+						if(is_array($lesson) !== false)//если пары для подгрупп или в разные (чётные/нечётные) недели
 							foreach($lesson as $sublesson)
 								$sublesson->insertToDb($currentGroup->getName(), $lessonCounter, 0, $day->getNumber(), 
-									$this->campusId, $this->course, 1, 0, $this->instituteId);
+									$this->campusId, $this->course, 1, 1, $this->instituteId);
 						else 
 							$lesson->insertToDb($currentGroup->getName(), $lessonCounter, 0, $day->getNumber(), 
-									$this->campusId, $this->course, 1, 1, $this->instituteId);
-						
-						//echo "typeof: ".gettype($lesson)."<br>\n";
+									$this->campusId, $this->course, 1, 0, $this->instituteId);
 						
 						$lessonCounter++;
 					}
@@ -113,11 +98,6 @@ class ParseClass
 			}
 		}
 		
-		/*
-		echo "<pre>";
-		echo print_r($this->groups);
-		echo "</pre>";
-		 */
 	}
 	
 	private function parseGroups($buffer)
@@ -132,12 +112,6 @@ class ParseClass
 	
 	private function parseDayCommand($dayAndLessonNumbers, $lessonData)
 	{
-	//	var_dump($dayAndLessonNumbers);
-	//	echo "<br>\n";
-	//	var_dump($lessonData);
-	//	echo "<br>\n";
-		///////////////////////
-		
 		$dayNumber = (int)$this->getDayNumber($dayAndLessonNumbers);
 		$lessonNumber = (int)$this->getLessonNumber($dayAndLessonNumbers);
 		
@@ -145,9 +119,6 @@ class ParseClass
 		
 		if(empty($lessonData))
 		{
-			//echo "<font color='#CC0000'><b>Нет пар!</b></font>";
-			//echo "<br>\n";
-			
 			foreach($this->groups as $group)
 			{
 				$group->getDay($dayNumber)->addLesson($lessonNumber, new Lesson());
@@ -167,9 +138,6 @@ class ParseClass
 		{
 			$group->getDay($dayNumber)->getOrAddLesson($lessonNumber);
 		}
-		//$groupList = $this->getGroupsList($lessonData);
-		
-		////////////////////////
 	}
 	
 	private function getDayNumber($dayAndLessonNumbers)
@@ -204,10 +172,7 @@ class ParseClass
 		$groupLesson = explode(">>", $groupLesson)[1];
 		
 		foreach($groups as $group)
-		{
-			//echo "группа ".$group."<br>\n";
 			$this->splitBySubgroup($groupLesson, $group, $dayNumber, $lessonNumber);
-		}
 	}
 	
 	private function getGroupsList($lessonData)
@@ -245,9 +210,23 @@ class ParseClass
 			{
 				$teacherRoomSubjectRaw = $kindOfWeekRaw[1];
 				$teacherRoomSubject = explode("|", $teacherRoomSubjectRaw);
+				
+				
 				$subject = $teacherRoomSubject[0];
 				$teacher = $teacherRoomSubject[1];
 				$room = $teacherRoomSubject[2];
+				
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
+				//отсюда вызывать запросы на добавление в бд трёх переменных выше
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
+				//***********************************************************************************
 			}
 			
 			array_push($lessonsWithSubgroups, new Lesson($subject, $teacher, $room, $onEvenWeek, $onOddWeek));
